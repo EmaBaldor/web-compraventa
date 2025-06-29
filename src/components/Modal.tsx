@@ -1,34 +1,49 @@
-import { ReactNode, Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+"use client";
+import React, { useEffect } from "react";
+import { createPortal } from "react-dom";
+import { X } from "lucide-react";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export default function Modal({ isOpen, onClose, title, children }: ModalProps) {
-  return (
-    <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="fixed inset-0 z-50 overflow-y-auto" onClose={onClose}>
-        <div className="min-h-screen px-4 text-center bg-black bg-opacity-50">
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 scale-95"
-            enterTo="opacity-100 scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 scale-100"
-            leaveTo="opacity-0 scale-95"
-          >
-            <Dialog.Panel className="inline-block w-full max-w-3xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-              {title && <Dialog.Title as="h3" className="text-lg font-medium text-gray-900 mb-4">{title}</Dialog.Title>}
-              {children}
-            </Dialog.Panel>
-          </Transition.Child>
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [onClose]);
+
+  if (!isOpen) return null;
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Si el clic fue en el fondo (no dentro del contenido), cerrar modal
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity" onClick={handleOverlayClick}>
+      <div className="relative bg-white rounded-2xl shadow-lg max-w-4xl w-full mx-4 animate-fadeIn scale-100 duration-300">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-600 hover:text-black"
+        >
+          <X size={24} />
+        </button>
+
+        <div className="p-6">
+          {title && <h2 className="text-2xl font-semibold mb-4 text-gray-800">{title}</h2>}
+          <div className="space-y-4 text-sm text-gray-700">{children}</div>
         </div>
-      </Dialog>
-    </Transition>
+      </div>
+    </div>,
+    document.body
   );
 }
