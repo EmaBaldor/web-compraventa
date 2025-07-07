@@ -6,11 +6,10 @@ import { X } from "lucide-react";
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title?: string;
   children: React.ReactNode;
 }
 
-export default function Modal({ isOpen, onClose, title, children }: ModalProps) {
+export default function Modal({ isOpen, onClose, children }: ModalProps) {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -33,13 +32,10 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
       <div className="relative bg-white rounded-2xl shadow-lg max-w-4xl w-full mx-4 animate-fadeIn scale-100 duration-300">
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-gray-600 hover:text-black"
-        >
+          className="absolute top-3 right-3 text-gray-600 hover:text-black">
           <X size={24} />
         </button>
-
         <div className="p-6">
-          {title && <h2 className="text-2xl font-semibold mb-4 text-gray-800">{title}</h2>}
           <div className="space-y-4 text-sm text-gray-700">{children}</div>
         </div>
       </div>
@@ -47,3 +43,6 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
     document.body
   );
 }
+
+
+

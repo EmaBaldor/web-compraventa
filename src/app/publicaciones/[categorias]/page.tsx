@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import PubliCard from "@/components/PubliCard";
+import PubliCard from "@/components/cards/PubliCard";
 import axios from "@/services/api";
 import { Publicacion } from "@/lib/publicacion";
 import { useParams } from "next/navigation";
